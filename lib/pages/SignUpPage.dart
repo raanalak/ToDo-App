@@ -1,19 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:todo/classes/User.dart';
-import 'package:todo/pages/SignUpPage.dart';
-import 'package:todo/pages/HomePage.dart';
+import 'package:todo/pages/LoginDemo.dart';
 
 import '../command.dart';
+import '../main.dart';
 import '../socket.dart';
 
 
-class LoginDemo extends StatefulWidget {
-  @override
-  _LoginDemoState createState() => _LoginDemoState();
-}
+class SignUpPage extends StatelessWidget {
 
-class _LoginDemoState extends State<LoginDemo> {
   late User user;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -48,10 +44,9 @@ class _LoginDemoState extends State<LoginDemo> {
                 Padding(
                   //padding: const EdgeInsets.only(left:15.0,right: 15.0,top:0,bottom: 0),
                   padding: EdgeInsets.symmetric(horizontal: 15),
-                  child: TextField(
-                    onChanged: (value) {
-                      user.userName = value;
-                    },
+                  child: TextField(onChanged: (value){
+                    user.userName = value;
+                  },
                     decoration: InputDecoration(
                       border: OutlineInputBorder(),
                       labelText: 'UserName',
@@ -63,7 +58,7 @@ class _LoginDemoState extends State<LoginDemo> {
                       left: 15.0, right: 15.0, top: 15, bottom: 0),
                   //padding: EdgeInsets.symmetric(horizontal: 15),
                   child: TextField(
-                    onChanged: (value) {
+                    onChanged: (value){
                       user.password = value;
                     },
                     obscureText: true,
@@ -73,43 +68,38 @@ class _LoginDemoState extends State<LoginDemo> {
                     ),
                   ),
                 ),
+                Padding(
+                  padding: const EdgeInsets.only(
+                      left: 15.0, right: 15.0, top: 30, bottom: 0),
+                  //padding: EdgeInsets.symmetric(horizontal: 15),
+                  child: TextField(
+                    onChanged: (value){
+                      user.email = value;
+                    },
+                    obscureText: true,
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(),
+                      labelText: 'email',
+                    ),
+                  ),
+                ),
                 Container(
-                  height: 50,
+                  height: 70,
                   width: 250,
                   decoration: BoxDecoration(
                       color: Color.fromRGBO(150, 87, 252, 1),
                       borderRadius: BorderRadius.circular(20)),
                   child: TextButton(
                     onPressed: () async {
-                      if(await _LogInUser()) {
+                      if(await _signUpUser()) {
                         Navigator.push(
                             context,
                             MaterialPageRoute(builder: (_) => HomePage()));
                       }
                     },
-
                     child: Text(
-                      'Login',
+                      'SignUp',
                       style: TextStyle(color: Colors.white, fontSize: 25),
-                    ),
-                  ),
-                ),
-                Container(
-                  height: 130,
-                  width: 250,
-                  decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(15)),
-                  child: TextButton(
-                    onPressed: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (_) => SignUpPage()));
-                    },
-                    child: Text(
-                      'new user? Creat Account',
-                      style: TextStyle(
-                          color: Color.fromRGBO(150, 87, 252, 1), fontSize: 15),
                     ),
                   ),
                 ),
@@ -118,19 +108,22 @@ class _LoginDemoState extends State<LoginDemo> {
         )
     );
   }
-
-  Future<bool> _LogInUser() async {
-    MySocket socket = MySocket(null, Command.LogIn,
-        [user.userName, user.password]);
+  Future<bool> _signUpUser() async {
+    MySocket socket = MySocket(null, Command.signUp,
+        [user.userName, user.password, user.email]);
     String response = await socket.sendAndReceive();
     return _checkServerResponse(response);
   }
   bool _checkServerResponse(String value) {
-    List<String> list = value.split(';');
-    bool userNameValid = list.elementAt(0) == 'true' ? true : false;
-    bool passValid = list.elementAt(1) == 'true' ? true : false;
+    if (value == 'false') {
+      return false;
+    } else if (value == 'phoneFalse') {
 
-    return userNameValid && passValid;
+      return false;
+    }
+    return true;
   }
 
 }
+
+
