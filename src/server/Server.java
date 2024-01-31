@@ -1,5 +1,7 @@
 package server;
 
+import database.Database;
+
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -13,7 +15,7 @@ public class Server {
 
     public static void main(String[] args) {
         try {
-            Database.initializeTables("jdbc:sqlite:C:/todo/db/todo.db");
+            Database.createDirectory();
         } catch (IOException e) {
             e.printStackTrace();
             System.exit(1);
@@ -23,6 +25,7 @@ public class Server {
         try (ServerSocket serverSocket = new ServerSocket(portNumber)) {
             while (true) {
                 Socket socket = serverSocket.accept();
+                System.out.println("connected");
                 executorService.execute(() -> {
                     try (Scanner in = new Scanner(socket.getInputStream(), "UTF-8");
                          DataOutputStream outputStream = new DataOutputStream(socket.getOutputStream())) {

@@ -58,13 +58,13 @@ public class Command {
 
     private byte[] signUpCommand() {
         try {
-            if (Database.findByUsername(data[0]) != null) {
+            if (Database.findByUsername(data[0]) != null)
                 return "userFalse".getBytes(StandardCharsets.UTF_8);
             User user = User.addUser(data[0], data[1], data[2]);
             boolean result = Database.saveNewUser(user);
             return String.valueOf(result).getBytes(StandardCharsets.UTF_8);
         }
-        catch (ParseException | IOException e) {
+        catch (IOException e) {
             e.printStackTrace();
         }
         return "false".getBytes(StandardCharsets.UTF_8);
